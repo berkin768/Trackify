@@ -5,11 +5,8 @@
       "version": "1.0.1",
       "type": "platform"
     },
-
     "system.data.sqlclient": "4.3.0",
     "System.Security.Cryptography.Algorithms": "4.3.0",
-
-
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Mvc": "1.0.1",
