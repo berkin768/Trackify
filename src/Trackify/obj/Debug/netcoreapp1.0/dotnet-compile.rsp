@@ -1,5 +1,5 @@
---temp-output:C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\obj\Debug\netcoreapp1.0\
---out:C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\bin\Debug\netcoreapp1.0\Trackify.dll
+--temp-output:c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\obj\Debug\netcoreapp1.0\
+--out:c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\bin\Debug\netcoreapp1.0\Trackify.dll
 --define:DEBUG
 --define:TRACE
 --define:NETCOREAPP1_0
@@ -198,19 +198,20 @@
 --reference:C:\Users\02483901\.nuget\packages\System.Threading.Timer\4.3.0\ref\netstandard1.2\System.Threading.Timer.dll
 --reference:C:\Users\02483901\.nuget\packages\System.Xml.ReaderWriter\4.3.0\ref\netstandard1.3\System.Xml.ReaderWriter.dll
 --reference:C:\Users\02483901\.nuget\packages\System.Xml.XDocument\4.0.11\ref\netstandard1.3\System.Xml.XDocument.dll
---resource:"C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\obj\Debug\netcoreapp1.0\Trackifydotnet-compile.deps.json",Trackify.deps.json
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Program.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Startup.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Controllers\AdminController.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Controllers\HomeController.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Controllers\LoginController.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Controllers\ProfileController.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Controllers\RegisterController.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\Controllers\TracksController.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\ELayer\Album.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\ELayer\Artist.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\ELayer\Date.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\ELayer\Track.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\ELayer\User.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\FLayer\TrackAdapter.cs
-C:\Users\02483901\documents\visual studio 2015\Projects\Trackify\src\Trackify\FLayer\UserAdapter.cs
+--resource:"c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\obj\Debug\netcoreapp1.0\Trackifydotnet-compile.deps.json",Trackify.deps.json
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Program.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Startup.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Controllers\AdminController.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Controllers\HomeController.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Controllers\LoginController.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Controllers\ProfileController.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Controllers\RegisterController.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\Controllers\TracksController.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\ELayer\Album.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\ELayer\Artist.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\ELayer\Playlist.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\ELayer\Session.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\ELayer\Track.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\ELayer\User.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\FLayer\SessionAdapter.cs
+c:\Users\02483901\Documents\Visual Studio 2015\Projects\Trackify\src\Trackify\FLayer\UserAdapter.cs

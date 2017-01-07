@@ -10611,6 +10611,7 @@
       "Microsoft.Extensions.Options.ConfigurationExtensions >= 1.0.0",
       "Microsoft.NETCore.App >= 1.0.1",
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0",
+      "Newtonsoft.Json >= 9.0.1",
       "System.Security.Cryptography.Algorithms >= 4.3.0",
       "system.data.sqlclient >= 4.3.0"
     ],

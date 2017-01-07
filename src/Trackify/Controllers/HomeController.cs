@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Trackify.ELayer;
+using Trackify.FLayer;
 
 namespace Trackify.Controllers
 {
@@ -10,15 +12,11 @@ namespace Trackify.Controllers
     {
         public IActionResult Index()
         {
-            UserAdapter.GetUserById(1);
             return View();
         }
 
         public IActionResult About()
         {
-            User ali = UserAdapter.GetUserById(1);
-            ViewData["Message"] = "USER:"+ ali.UserName;
-
             return View();
         }
             
