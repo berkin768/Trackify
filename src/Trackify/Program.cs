@@ -15,6 +15,7 @@ namespace Trackify
         {
             //var projConf = new ConfigurationBuilder().AddJsonFile("project.json").Build();
             //ConnectionString = projConf["ConnectionString"];
+
             ConnectionString = "server=DESKTOP-BII7C2E;database=Trackify;Trusted_Connection=true;";
             Console.WriteLine("CONNECTION STRIN" + Program.ConnectionString);
             var host = new WebHostBuilder()

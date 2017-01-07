@@ -1,131 +1,187 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
-namespace Trackify
+using System.Data.SqlTypes;
+using Trackify;
+using Trackify.ELayer;
+
+namespace Trackify.FLayer
 {
     public class UserAdapter
     {
-        static SqlConnection con = new SqlConnection(Program.ConnectionString);
-        public static User GetUserById(int Id)
+        private static SqlConnection Con = new SqlConnection(Program.ConnectionString);
+        public static User GetUserById(string userId)
         {
             User newuser = new User();
-            string tmpId = Id.ToString();
-            if (con.State == System.Data.ConnectionState.Open)
-                con.Close();
-            con.Open();
-            var cmd = new SqlCommand("Select * From Users Where Id = "+ tmpId, con);
-            SqlDataReader rd = cmd.ExecuteReader();
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Select * From Users Where UserId = " + userId, Con);
+            var rd = cmd.ExecuteReader();
             if (!rd.Read())
             {
-                return null;
-            }
-            newuser.Id = Convert.ToInt32(rd["Id"].ToString());   
-            newuser.Country = rd["Country"].ToString();
-            newuser.City = rd["City"].ToString();
-            newuser.DateOfBirth = new Date(rd["DateOfBirth"].ToString());
-            newuser.RealName = rd["RealName"].ToString();
-            newuser.RealSurname = rd["RealSurname"].ToString();
-            newuser.UserName = rd["UserName"].ToString();
-            newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
-            newuser.PassHash = rd["PasswordHash"].ToString();
-            return newuser;
-        }
-        public static User GetUserByUserName(string UserName)
-        {
-            User newuser = new User();
-            if (con.State == System.Data.ConnectionState.Open)
-                con.Close();
-            con.Open();
-            var cmd = new SqlCommand("Select * From Users Where UserName = " + UserName, con);
-            SqlDataReader rd = cmd.ExecuteReader();
-            if (!rd.Read())
-            {
-                con.Close();
                 return null;
             }
             newuser.Id = Convert.ToInt32(rd["Id"].ToString());
+            newuser.UserId = rd["UserId"].ToString();
+            newuser.DisplayName = rd["DisplayName"].ToString();
+            newuser.AccountUrl = rd["AccountUrl"].ToString();
+            newuser.DateOfBirth = rd["DateOfBirth"].ToString();
+            newuser.ImageUrl = rd["ImageUrl"].ToString();
             newuser.Country = rd["Country"].ToString();
-            newuser.City = rd["City"].ToString();
-            newuser.DateOfBirth = new Date(rd["DateOfBirth"].ToString());
-            newuser.RealName = rd["RealName"].ToString();
-            newuser.RealSurname = rd["RealSurname"].ToString();
-            newuser.UserName = rd["UserName"].ToString();
+            newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
+            newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
+            newuser.SpotifyToken = rd["SpotifyToken"].ToString();
+            newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
+            newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
             newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
-            newuser.PassHash = rd["PasswordHash"].ToString();
-            con.Close();
+            return newuser;
+        }
+
+        public static User GetUserByUserName(string displayName)
+        {
+            User newuser = new User();
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Select * From Users Where DisplayName = " + displayName, Con);
+            var rd = cmd.ExecuteReader();
+            if (!rd.Read())
+            {
+                Con.Close();
+                return null;
+            }
+            newuser.Id = Convert.ToInt32(rd["Id"].ToString());
+            newuser.UserId = rd["UserId"].ToString();
+            newuser.DisplayName = rd["DisplayName"].ToString();
+            newuser.AccountUrl = rd["SpotifyAccountUrl"].ToString();
+            newuser.DateOfBirth = rd["DateOfBirth"].ToString();
+            newuser.ImageUrl = rd["SpotifyImgUrl"].ToString();
+            newuser.Country = rd["Country"].ToString();
+            newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
+            newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
+            newuser.SpotifyToken = rd["SpotifyToken"].ToString();
+            newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
+            newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
+            newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
+            Con.Close();
             return newuser;
         }
         public static void RemoveUser(User user)
         {
-            if (con.State == System.Data.ConnectionState.Open)
-                con.Close();
-            con.Open();
-            var cmd = new SqlCommand("Delete From Users Where Id = " + user.Id.ToString(), con);
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Delete From Users Where UserId = " + user.Id, Con);
             cmd.ExecuteNonQuery();
-            con.Close();
+            Con.Close();
+        }
+
+        public static void RemoveAllUsers()
+        {
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Drop Table Users", Con);
+            cmd.ExecuteNonQuery();
+            Con.Close();
         }
         public static void AddUser(User user)
         {
-            if (con.State == System.Data.ConnectionState.Open)
-                con.Close();
-            con.Open();
-            string query = "Insert Into Users(Country, City, DateOfBirth, RealName, RealSurname," +
-                " UserName, FollowerCount, PasswordHash) values(" +
-                "\'" + user.Country + "\' , " +
-                "\'" + user.City + "\' , " +
-                "\'" + Date.FromDate(user.DateOfBirth) + "\' , " +
-                "\'" + user.RealName + "\' , " +
-                "\'" + user.RealSurname + "\' , " +
-                "\'" + user.UserName + "\' , " +
-                user.FollowerCount + " , " +
-                "\'" + user.PassHash + "\');";
-            var cmd = new SqlCommand(query, con);
-            cmd.ExecuteNonQuery();
-            con.Close();
+            using (var connection = new SqlConnection(Program.ConnectionString))
+            {
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandType = CommandType.Text;
+                    command.CommandText =
+                        " INSERT INTO Users (UserId, SpotifyToken, UserRole, Country, SpotifyImgUrl, SpotifyAccountUrl, SpotifyAuthenticationToken, SpotifyTokenExpire," +
+                        " SpotifyRefreshToken, DateOfBirth, DisplayName, FollowerCount)" +
+
+                        "VALUES(@UserId, @SpotifyToken, @UserRole, @Country, @ImageUrl, @AccountUrl, @SpotifyAuthenticationToken, " +
+                        "@SpotifyTokenExpire, @SpotifyRefreshToken, @DateOfBirth, @DisplayName, @FollowerCount)";
+                    command.Parameters.AddWithValue("@UserId", user.UserId ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@SpotifyToken", user.SpotifyToken ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@UserRole", user.UserRole);
+                    command.Parameters.AddWithValue("@Country", user.Country ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@SpotifyImgUrl", user.ImageUrl ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@SpotifyAccountUrl", user.AccountUrl ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@SpotifyAuthenticationToken", user.SpotifyAuthenticationToken ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@SpotifyTokenExpire", user.SpotifyTokenExpire ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@SpotifyRefreshToken", user.SpotifyRefreshToken ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@DateOfBirth", user.DateOfBirth ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@DisplayName", user.DisplayName ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@FollowerCount", user.FollowerCount);
+
+                    try
+                    {
+                        connection.Open();
+                        var recordsAffected = command.ExecuteNonQuery();
+                        connection.Close();
+                    }
+                    catch (SqlException exception)
+                    {
+                        // error here
+                    }
+                }
+            }
         }
         public static void Updateuser(User user)
         {
-            if (con.State == System.Data.ConnectionState.Open)
-                con.Close();
-            con.Open();
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+
             string query = "UPDATE Users SET " +
-                "Country = \'"+ user.Country + "\' , "+
-                "City = \'" + user.City + "\' , " +
-                "RealName = \'" + user.RealName + "\' , " +
-                "RealSurname = \'" + user.RealSurname + "\' , " +
-                "UserName = \'" + user.UserName + "\' , " +
-                "FollowerCount = " + user.FollowerCount + " , " +
-                "PasswordHash = \'" + user.PassHash + "\' , " +
-                "DateOfBirth = \'" + Date.FromDate(user.DateOfBirth) + "\' " +
-                "WHERE Id = "+user.Id;
-            var cmd = new SqlCommand(query, con);
+
+                  "UserId = \'" + user.UserId + "\' , " +
+                  "SpotifyToken = \'" + user.SpotifyToken + "\' , " +
+                  "UserRole = \'" + user.UserRole + "\' , " +
+                  "Country = \'" + user.Country + "\' , " +
+                  "SpotifyImgUrl = \'" + user.ImageUrl + "\' , " +
+                  "SpotifyAccountUrl = \'" + user.AccountUrl + "\' , " +
+                 "SpotifyAuthenticationToken = \'" + user.SpotifyAuthenticationToken + "\' , " +
+                 "SpotifyTokenExpire = \'" + user.SpotifyTokenExpire + "\' , " +
+                "SpotifyRefreshToken = \'" + user.SpotifyRefreshToken + "\' , " +
+                "DateOfBirth = \'" + user.DateOfBirth + "\' , " +
+                "DisplayName = \'" + user.DisplayName + "\' , " +
+                "FollowerCount = \'" + user.FollowerCount + "\' , " +
+                "WHERE Id = " + user.UserId;
+            var cmd = new SqlCommand(query, Con);
             cmd.ExecuteNonQuery();
-            con.Close();
+            Con.Close();
         }
         public static List<User> ListUsers()
         {
-            if (con.State == System.Data.ConnectionState.Open)
-                con.Close();
-            List<User> UserList = new List<User>();
-            con.Open();
-            var cmd = new SqlCommand("Select * From Users ", con);
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            var userList = new List<User>();
+            Con.Open();
+            var cmd = new SqlCommand("Select * From Users ", Con);
             SqlDataReader rd = cmd.ExecuteReader();
             while (rd.Read())
             {
-                User newuser = new User();
-                newuser.Id = Convert.ToInt32(rd["Id"].ToString());
-                newuser.Country = rd["Country"].ToString();
-                newuser.City = rd["City"].ToString();
-                newuser.DateOfBirth = new Date(rd["DateOfBirth"].ToString());
-                newuser.RealName = rd["RealName"].ToString();
-                newuser.RealSurname = rd["RealSurname"].ToString();
-                newuser.UserName = rd["UserName"].ToString();
-                newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
-                newuser.PassHash = rd["PasswordHash"].ToString();
-                UserList.Add(newuser);
+                var newuser = new User
+                {
+                    Id = Convert.ToInt32(rd["Id"].ToString()),
+                    UserId = rd["UserId"].ToString(),
+                    DisplayName = rd["DisplayName"].ToString(),
+                    AccountUrl = rd["AccountUrl"].ToString(),
+                    DateOfBirth = rd["DateOfBirth"].ToString(),
+                    ImageUrl = rd["ImageUrl"].ToString(),
+                    Country = rd["Country"].ToString(),
+                    SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString(),
+                    SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString(),
+                    SpotifyToken = rd["SpotifyToken"].ToString(),
+                    SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString(),
+                    UserRole = Convert.ToInt32(rd["UserRole"].ToString()),
+                    FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString())
+                };
+                userList.Add(newuser);
             }
-            con.Close();
-            return UserList;
+            Con.Close();
+            return userList;
         }
     }
 }
