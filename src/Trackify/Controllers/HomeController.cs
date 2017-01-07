@@ -12,11 +12,13 @@ namespace Trackify.Controllers
     {
         public IActionResult Index()
         {
+
             return View();
         }
 
         public IActionResult About()
         {
+
             return View();
         }
             
