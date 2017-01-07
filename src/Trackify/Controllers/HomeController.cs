@@ -10,14 +10,13 @@ namespace Trackify.Controllers
     {
         public IActionResult Index()
         {
-            UserAdapter.GetUserById(1);
+            
             return View();
         }
 
         public IActionResult About()
         {
-            User ali = UserAdapter.GetUserById(1);
-            ViewData["Message"] = "USER:"+ ali.UserName;
+            
 
             return View();
         }
