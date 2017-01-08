@@ -12,7 +12,13 @@ namespace Trackify.Controllers
     {
         public IActionResult Index()
         {
-
+            if (!SpotifyApi.AuthenticationManager.Auth(Request))
+            {
+                return RedirectToAction("Unauthorized", "Login");
+                
+            }
+            var currentUser = SpotifyApi.AuthenticationManager.GetUserFromCookie(Request);
+            ViewData["Title"]=  currentUser.DisplayName;
             return View();
         }
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using Newtonsoft.Json;
 using Trackify.FLayer;
+using Trackify.ELayer;
 
 // For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,14 +22,14 @@ namespace Trackify.Controllers
         {
             string response = "https://accounts.spotify.com/authorize";
             
-            response = response + "?client_id="+client_id+"&redirect_uri="+redirect_uri+"&scope=user-read-private%20user-read-email&response_type=code&state=123";
+            response = response + "?client_id="+client_id+"&redirect_uri="+redirect_uri+ "&scope=user-read-private%20user-read-email%20user-read-birthdate&response_type=code&state=123";
             return Redirect(response);
         }
-        public async Task<string> Callback(string code, string state, string error)
+        public async Task<IActionResult> Callback(string code, string state, string error)
         {
             if (error != null)
             {
-                return "Auth Error Accoured!";
+                return RedirectToRoute("/login/unauthorized");
 
             }
             CallbackResponse cr;
@@ -48,16 +49,22 @@ namespace Trackify.Controllers
 
                 var responseString = await response.Content.ReadAsStringAsync();
                 cr = JsonConvert.DeserializeObject<CallbackResponse>(responseString);
-                
             }
-
-            var s = SessionAdapter.GenerateSession("ALLAH");
-            //TODO Get user details
-            //Add user if not exist on table
-            //Give User a cookie
-            //Save that cookie on a table
-            return s.Code; 
-            
+            string responseJson = await SpotifyApi.ApiManager.Auth_Get("https://api.spotify.com/v1/me",cr.access_token);
+            Console.WriteLine(responseJson);
+            //save user on sign-up
+            User CurrentUser = UserAdapter.ParseUserJson(responseJson);
+            //generate and save session information
+            CurrentUser = UserAdapter.GetUserBySpotifyUserId(CurrentUser.UserId);
+            Session s = SessionAdapter.GenerateSession(CurrentUser.Id);
+            //Set the cookies value
+            Response.Cookies.Append("Trackify-Auth",s.Code);
+            Response.Cookies.Append("Trackify-UId", s.UserId.ToString());
+            return RedirectToAction("Index", "Home");
+        }
+        public IActionResult Unauthorized()
+        {
+            return View();
         }
         class CallbackResponse {
             public string access_token;

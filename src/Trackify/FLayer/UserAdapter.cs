@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -10,25 +11,72 @@ namespace Trackify.FLayer
 {
     public class UserAdapter
     {
-        private static SqlConnection Con = new SqlConnection(Program.ConnectionString);
-        public static User GetUserById(string userId)
+        private static readonly SqlConnection Con = new SqlConnection(Program.ConnectionString);
+        public static User ParseUserJson(string userJson)
+        {
+            dynamic jsonObject = JsonConvert.DeserializeObject(userJson);
+            try
+                {
+                string birthDate = jsonObject.birthdate;
+                string country = jsonObject.country;
+                string displayName = jsonObject.display_name;
+                string accountUrl = jsonObject.external_urls.spotify;
+                string followerCount = jsonObject.followers.total;
+                string userId = jsonObject.id;
+                string profileImage = "";
+
+                try
+                {
+                    profileImage = jsonObject.images[0].url;
+                }
+                catch (Exception)
+                {
+
+                }
+                if (userId != null)
+                {
+                    User user = new User();
+                    user.UserId = userId;
+                    user.AccountUrl = accountUrl;
+                    user.ImageUrl = profileImage;
+                    user.DisplayName = displayName;
+                    user.DateOfBirth = birthDate;
+                    user.Country = country;
+                    user.FollowerCount = Convert.ToInt32(followerCount);
+                    //Program.users.Add(user);
+                    if(GetUserBySpotifyUserId(userId) == null)
+                    {
+                        AddUser(user);
+                    }
+                    return user;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
+            return null;
+        }
+
+        public static User GetUserById(int Id)
         {
             User newuser = new User();
             if (Con.State == ConnectionState.Open)
                 Con.Close();
             Con.Open();
-            var cmd = new SqlCommand("Select * From Users Where UserId = " + userId, Con);
+            var cmd = new SqlCommand("Select * From Users Where Id = \'" + Id + "\'", Con);
             var rd = cmd.ExecuteReader();
             if (!rd.Read())
             {
+                Con.Close();
                 return null;
             }
             newuser.Id = Convert.ToInt32(rd["Id"].ToString());
             newuser.UserId = rd["UserId"].ToString();
             newuser.DisplayName = rd["DisplayName"].ToString();
-            newuser.AccountUrl = rd["AccountUrl"].ToString();
+            newuser.AccountUrl = rd["SpotifyAccountUrl"].ToString();
             newuser.DateOfBirth = rd["DateOfBirth"].ToString();
-            newuser.ImageUrl = rd["ImageUrl"].ToString();
+            newuser.ImageUrl = rd["SpotifyImgUrl"].ToString();
             newuser.Country = rd["Country"].ToString();
             newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
             newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
@@ -36,16 +84,46 @@ namespace Trackify.FLayer
             newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
             newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
             newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
+            Con.Close();
             return newuser;
         }
 
-        public static User GetUserByUserName(string displayName)
+        public static User GetUserByDisplayName(string displayName)
         {
             User newuser = new User();
             if (Con.State == ConnectionState.Open)
                 Con.Close();
             Con.Open();
             var cmd = new SqlCommand("Select * From Users Where DisplayName = " + displayName, Con);
+            var rd = cmd.ExecuteReader();
+            if (!rd.Read())
+            {
+                Con.Close();
+                return null;
+            }
+            newuser.Id = Convert.ToInt32(rd["Id"].ToString());
+            newuser.UserId = rd["UserId"].ToString();
+            newuser.DisplayName = rd["DisplayName"].ToString();
+            newuser.AccountUrl = rd["SpotifyAccountUrl"].ToString();
+            newuser.DateOfBirth = rd["DateOfBirth"].ToString();
+            newuser.ImageUrl = rd["SpotifyImgUrl"].ToString();
+            newuser.Country = rd["Country"].ToString();
+            newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
+            newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
+            newuser.SpotifyToken = rd["SpotifyToken"].ToString();
+            newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
+            newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
+            newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
+            Con.Close();
+            return newuser;
+        }
+        public static User GetUserBySpotifyUserId(string userid)
+        {
+            User newuser = new User();
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Select * From Users Where UserId = \'" + userid + "\';", Con);
             var rd = cmd.ExecuteReader();
             if (!rd.Read())
             {
@@ -99,7 +177,7 @@ namespace Trackify.FLayer
                         " INSERT INTO Users (UserId, SpotifyToken, UserRole, Country, SpotifyImgUrl, SpotifyAccountUrl, SpotifyAuthenticationToken, SpotifyTokenExpire," +
                         " SpotifyRefreshToken, DateOfBirth, DisplayName, FollowerCount)" +
 
-                        "VALUES(@UserId, @SpotifyToken, @UserRole, @Country, @ImageUrl, @AccountUrl, @SpotifyAuthenticationToken, " +
+                        "VALUES(@UserId, @SpotifyToken, @UserRole, @Country, @SpotifyImgUrl, @SpotifyAccountUrl, @SpotifyAuthenticationToken, " +
                         "@SpotifyTokenExpire, @SpotifyRefreshToken, @DateOfBirth, @DisplayName, @FollowerCount)";
                     command.Parameters.AddWithValue("@UserId", user.UserId ?? SqlString.Null);
                     command.Parameters.AddWithValue("@SpotifyToken", user.SpotifyToken ?? SqlString.Null);
@@ -146,7 +224,7 @@ namespace Trackify.FLayer
                 "SpotifyRefreshToken = \'" + user.SpotifyRefreshToken + "\' , " +
                 "DateOfBirth = \'" + user.DateOfBirth + "\' , " +
                 "DisplayName = \'" + user.DisplayName + "\' , " +
-                "FollowerCount = \'" + user.FollowerCount + "\' , " +
+                "FollowerCount = \'" + user.FollowerCount + "\'" +
                 "WHERE Id = " + user.UserId;
             var cmd = new SqlCommand(query, Con);
             cmd.ExecuteNonQuery();
@@ -167,9 +245,9 @@ namespace Trackify.FLayer
                     Id = Convert.ToInt32(rd["Id"].ToString()),
                     UserId = rd["UserId"].ToString(),
                     DisplayName = rd["DisplayName"].ToString(),
-                    AccountUrl = rd["AccountUrl"].ToString(),
+                    AccountUrl = rd["SpotifyAccountUrl"].ToString(),
                     DateOfBirth = rd["DateOfBirth"].ToString(),
-                    ImageUrl = rd["ImageUrl"].ToString(),
+                    ImageUrl = rd["SpotifyImgUrl"].ToString(),
                     Country = rd["Country"].ToString(),
                     SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString(),
                     SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString(),

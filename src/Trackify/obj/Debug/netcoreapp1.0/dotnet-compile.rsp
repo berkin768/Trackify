@@ -209,8 +209,13 @@ C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\RegisterController.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\TracksController.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Album.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Artist.cs
-C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Date.cs
+C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Playlist.cs
+C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Session.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Track.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\User.cs
+C:\Users\emre_\Desktop\Trackify\src\Trackify\FLayer\PlaylistAdapter.cs
+C:\Users\emre_\Desktop\Trackify\src\Trackify\FLayer\SessionAdapter.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\FLayer\TrackAdapter.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\FLayer\UserAdapter.cs
+C:\Users\emre_\Desktop\Trackify\src\Trackify\SpotifyApi\ApiManager.cs
+C:\Users\emre_\Desktop\Trackify\src\Trackify\SpotifyApi\AuthenticationManager.cs

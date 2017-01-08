@@ -12,12 +12,20 @@ namespace Trackify.FLayer
     public class SessionAdapter
     {
         private static SqlConnection Con = new SqlConnection(Program.ConnectionString);
-        public static Session GenerateSession(string UserId)
+        public static Session GenerateSession(int UserId)
         {
-            Session s = new Session();
-            s.UserId = UserId;
-            s.Code = GenerateRandomCode();
-            SaveSession(s);
+            Session s;
+            if(GetSessionByUserId(UserId) != null)
+            {
+                s = UpdateSession(UserId);
+            }
+            else
+            {
+                s = new Session();
+                s.UserId = UserId;
+                s.Code = GenerateRandomCode();
+                SaveSession(s);
+            }
             return s;
         }
         public static void SaveSession(Session s){
@@ -30,7 +38,7 @@ namespace Trackify.FLayer
                     command.CommandText =
                         " INSERT INTO SessionTBL (UserId, Code)" +
                         "VALUES(@UserId, @Code)";
-                    command.Parameters.AddWithValue("@UserId", s.UserId ?? SqlString.Null);
+                    command.Parameters.AddWithValue("@UserId", s.UserId);
                     command.Parameters.AddWithValue("@Code", s.Code ?? SqlString.Null);
                     try
                     {
@@ -45,13 +53,13 @@ namespace Trackify.FLayer
                 }
             }
         }
-        public static Session GetSession(string Code)
+        public static Session GetSessionByCode(string Code)
         {
             Session s = new Session();
             if (Con.State == ConnectionState.Open)
                 Con.Close();
             Con.Open();
-            var cmd = new SqlCommand("Select * From Users Where Code = " + Code, Con);
+            var cmd = new SqlCommand("Select * From SessionTBL Where Code = \'" + Code + "\';", Con);
             var rd = cmd.ExecuteReader();
             if (!rd.Read())
             {
@@ -59,13 +67,35 @@ namespace Trackify.FLayer
                 return null;
             }
             s.Id = Convert.ToInt32(rd["Id"].ToString());
-            s.UserId = rd["UserId"].ToString();
+            s.UserId = Convert.ToInt32(rd["UserId"].ToString());
             s.Code = rd["Code"].ToString();
             Con.Close();
             return s;
         }
-        public static void UpdateSession(Session s)
+        public static Session GetSessionByUserId(int UserId)
         {
+            Session s = new Session();
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Select * From SessionTBL Where UserId = \'" + UserId + "\';", Con);
+            var rd = cmd.ExecuteReader();
+            if (!rd.Read())
+            {
+                Con.Close();
+                return null;
+            }
+            s.Id = Convert.ToInt32(rd["Id"].ToString());
+            s.UserId = Convert.ToInt32(rd["UserId"].ToString());
+            s.Code = rd["Code"].ToString();
+            Con.Close();
+            return s;
+        }
+        public static Session UpdateSession(int UserId)
+        {
+            Session s = new ELayer.Session();
+            s.UserId = UserId;
+            s.Code = GenerateRandomCode();
             if (Con.State == ConnectionState.Open)
                 Con.Close();
             Con.Open();
@@ -76,15 +106,16 @@ namespace Trackify.FLayer
             var cmd = new SqlCommand(query, Con);
             cmd.ExecuteNonQuery();
             Con.Close();
+            return s;
         }
         //if returns null this means it does not exist
-        public static string ValidateUser(string CookieCode)
+        public static int ValidateUser(string CookieCode)
         {
-            Session s = GetSession(CookieCode);
+            Session s = GetSessionByCode(CookieCode);
             if (s != null){
                 return s.UserId;
             }
-            return null;
+            return -1;
         }
         private static string GenerateRandomCode()
         {
