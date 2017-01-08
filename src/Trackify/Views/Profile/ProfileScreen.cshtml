@@ -1,0 +1,39 @@
+﻿@model Trackify.ELayer.User
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="~/js/jquery.js"></script>
+    <link href="~/css/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="main" class="container" style="margin-top: 50px;">
+        <div name="showProfile" class="jumbotron">
+            <a href="">
+                <img src=@Model.ImageUrl class="circular" />
+            </a>
+            @if (!string.IsNullOrEmpty(Model.Country))
+            {
+                <h3>Country > @Model.Country</h3>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.AccountUrl))
+            {
+                <a href=@Model.AccountUrl style="text-decoration: none" class="h3">Account URL</a>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.DisplayName))
+            {
+                <h3>@Model.DisplayName</h3>
+            }
+
+            <h3>Follower Count > @Model.FollowerCount</h3>
+            @if (!string.IsNullOrEmpty(Model.DateOfBirth))
+            {
+                <h3>@Model.DateOfBirth</h3>
+            }
+        </div>
+    </div>
+    <!--<script src="~/js/profile.js"></script>-->
+</body>
+</html>

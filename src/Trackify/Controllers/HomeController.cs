@@ -10,34 +10,27 @@ namespace Trackify.Controllers
 {
     public class HomeController : Controller
     {
+        public void deleteUsers()
+        {
+            UserAdapter.RemoveAllUsers();
+        }
+
+        public IEnumerable<User> getUsers()
+        {
+            Program.users = UserAdapter.ListUsers();
+            return Program.users.AsEnumerable();
+        }
+
         public IActionResult Index()
         {
             if (!SpotifyApi.AuthenticationManager.Auth(Request))
             {
                 return RedirectToAction("Unauthorized", "Login");
-                
             }
             var currentUser = SpotifyApi.AuthenticationManager.GetUserFromCookie(Request);
-            ViewData["Title"]=  currentUser.DisplayName;
-            return View();
-        }
-
-        public IActionResult About()
-        {
-
-            return View();
-        }
-            
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Error()
-        {
-            return View();
+            ViewData["Title"] = currentUser.DisplayName;
+            var users = getUsers();
+            return View(users);
         }
     }
 }

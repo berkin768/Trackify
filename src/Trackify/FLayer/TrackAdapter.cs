@@ -114,6 +114,7 @@ namespace Trackify.FLayer
                 con.Close();
             con.Open();
             string query = "UPDATE Tracks SET " +
+                "TrackID = \'" + track.TrackId + "\' " +
                 "ImageURL = \'" + track.ImageUrl + "\' , " +
                 "TrackURL = \'" + track.TrackUrl + "\' , " +
                 "TrackName = \'" + track.TrackName + "\' , " +

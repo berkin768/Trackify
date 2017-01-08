@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Trackify.ELayer.User>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+    <script src="~/js/jquery.js"></script>
+    <link href="~/css/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+
+<div class="container" style="display: table-cell;vertical-align: middle;  text-align: center;">
+    <div id="buttons" style="padding: 10px;">
+        <a id="addButton" href="#" class="btn btn-primary" style="margin-top: 6px;">Add User</a>
+    </div>
+    <table id="adminTable" style="display: inline-block">
+        <tbody>
+        @foreach (var person in @Model)
+        {
+                <tr>
+                    <td style="padding: 10px;">
+                        <div id="userName" style="display: inline-block">
+                            <h4 name="person" id="goProfile" class="elements" style="cursor: pointer; display: inline-block">
+                                @(!string.IsNullOrEmpty(person.DisplayName) ? person.DisplayName : person.UserId)
+                            </h4>
+                        </div>
+                        <div id="userButton" style="display: inline-block; float: right">
+                            @if (!string.IsNullOrEmpty(person.DisplayName) && person.UserRole == 0)
+                            {
+                                <a href="#" class="user-action btn btn-info"
+                                   data-url="@Url.Action("UpdateUser", "admin")"
+                                   data-username="@person.DisplayName"
+                                   data-op="update">Update User</a>
+
+                                <a href="#" class="user-action btn btn-warning"
+                                   data-url="@Url.Action("deleteUser", "admin")"
+                                   data-username="@person.DisplayName"
+                                   data-op="delete">Delete User</a>
+                            }
+                            else
+                            {
+                                if (person.UserRole == 0)
+                                {
+                                    <a href="#" class="user-action btn btn-info"
+                                       data-url="@Url.Action("UpdateUser", "admin")"
+                                       data-username="@person.UserId"
+                                       data-op="update">Update User</a>
+                                    <a href="#" class="user-action btn btn-warning"
+                                       data-url="@Url.Action("deleteUser", "admin")"
+                                       data-username="@person.UserId"
+                                       data-op="delete">Delete User</a>
+                                }
+
+                            }                         
+                        </div>
+                    </td>
+                </tr>          
+        }
+        </tbody>
+    </table>
+</div>
+    <script src="~/js/admin.js"></script>
+</body>
+</html>

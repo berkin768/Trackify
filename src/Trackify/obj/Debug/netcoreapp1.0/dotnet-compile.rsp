@@ -205,8 +205,7 @@ C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\AdminController.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\HomeController.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\LoginController.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\ProfileController.cs
-C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\RegisterController.cs
-C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\TracksController.cs
+C:\Users\emre_\Desktop\Trackify\src\Trackify\Controllers\TrackController.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Album.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Artist.cs
 C:\Users\emre_\Desktop\Trackify\src\Trackify\ELayer\Playlist.cs

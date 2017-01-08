@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Trackify.Controllers
 {
-    public class RegisterController : Controller
+    public class TrackController : Controller
     {
         // GET: /<controller>/
-        public IActionResult Index()
+        public IActionResult Index(string TrackId)
         {
             return View();
         }

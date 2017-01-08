@@ -53,7 +53,7 @@ namespace Trackify.Controllers
             string responseJson = await SpotifyApi.ApiManager.Auth_Get("https://api.spotify.com/v1/me",cr.access_token);
             Console.WriteLine(responseJson);
             //save user on sign-up
-            User CurrentUser = UserAdapter.ParseUserJson(responseJson);
+            User CurrentUser = UserAdapter.ParseUserJson(responseJson,1);
             //generate and save session information
             CurrentUser = UserAdapter.GetUserBySpotifyUserId(CurrentUser.UserId);
             Session s = SessionAdapter.GenerateSession(CurrentUser.Id);

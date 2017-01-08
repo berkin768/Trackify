@@ -6,17 +6,18 @@ using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using Trackify;
 using Trackify.ELayer;
+using Trackify.Log;
 
 namespace Trackify.FLayer
 {
     public class UserAdapter
     {
         private static readonly SqlConnection Con = new SqlConnection(Program.ConnectionString);
-        public static User ParseUserJson(string userJson)
+        public static User ParseUserJson(string userJson, int role)
         {
             dynamic jsonObject = JsonConvert.DeserializeObject(userJson);
             try
-                {
+            {
                 string birthDate = jsonObject.birthdate;
                 string country = jsonObject.country;
                 string displayName = jsonObject.display_name;
@@ -42,9 +43,9 @@ namespace Trackify.FLayer
                     user.DisplayName = displayName;
                     user.DateOfBirth = birthDate;
                     user.Country = country;
+                    user.UserRole = role;
                     user.FollowerCount = Convert.ToInt32(followerCount);
-                    //Program.users.Add(user);
-                    if(GetUserBySpotifyUserId(userId) == null)
+                    if (GetUserBySpotifyUserId(userId) == null)
                     {
                         AddUser(user);
                     }
@@ -56,66 +57,6 @@ namespace Trackify.FLayer
                 Console.WriteLine(e.StackTrace);
             }
             return null;
-        }
-
-        public static User GetUserById(int Id)
-        {
-            User newuser = new User();
-            if (Con.State == ConnectionState.Open)
-                Con.Close();
-            Con.Open();
-            var cmd = new SqlCommand("Select * From Users Where Id = \'" + Id + "\'", Con);
-            var rd = cmd.ExecuteReader();
-            if (!rd.Read())
-            {
-                Con.Close();
-                return null;
-            }
-            newuser.Id = Convert.ToInt32(rd["Id"].ToString());
-            newuser.UserId = rd["UserId"].ToString();
-            newuser.DisplayName = rd["DisplayName"].ToString();
-            newuser.AccountUrl = rd["SpotifyAccountUrl"].ToString();
-            newuser.DateOfBirth = rd["DateOfBirth"].ToString();
-            newuser.ImageUrl = rd["SpotifyImgUrl"].ToString();
-            newuser.Country = rd["Country"].ToString();
-            newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
-            newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
-            newuser.SpotifyToken = rd["SpotifyToken"].ToString();
-            newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
-            newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
-            newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
-            Con.Close();
-            return newuser;
-        }
-
-        public static User GetUserByDisplayName(string displayName)
-        {
-            User newuser = new User();
-            if (Con.State == ConnectionState.Open)
-                Con.Close();
-            Con.Open();
-            var cmd = new SqlCommand("Select * From Users Where DisplayName = " + displayName, Con);
-            var rd = cmd.ExecuteReader();
-            if (!rd.Read())
-            {
-                Con.Close();
-                return null;
-            }
-            newuser.Id = Convert.ToInt32(rd["Id"].ToString());
-            newuser.UserId = rd["UserId"].ToString();
-            newuser.DisplayName = rd["DisplayName"].ToString();
-            newuser.AccountUrl = rd["SpotifyAccountUrl"].ToString();
-            newuser.DateOfBirth = rd["DateOfBirth"].ToString();
-            newuser.ImageUrl = rd["SpotifyImgUrl"].ToString();
-            newuser.Country = rd["Country"].ToString();
-            newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
-            newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
-            newuser.SpotifyToken = rd["SpotifyToken"].ToString();
-            newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
-            newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
-            newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
-            Con.Close();
-            return newuser;
         }
         public static User GetUserBySpotifyUserId(string userid)
         {
@@ -146,12 +87,71 @@ namespace Trackify.FLayer
             Con.Close();
             return newuser;
         }
+        public static User GetUserById(int Id)
+        {
+            User newuser = new User();
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Select * From Users Where Id = \'" + Id + "\'", Con);
+            var rd = cmd.ExecuteReader();
+            if (!rd.Read())
+            {
+                Con.Close();
+                return null;
+            }
+            newuser.Id = Convert.ToInt32(rd["Id"].ToString());
+            newuser.UserId = rd["UserId"].ToString();
+            newuser.DisplayName = rd["DisplayName"].ToString();
+            newuser.AccountUrl = rd["SpotifyAccountUrl"].ToString();
+            newuser.DateOfBirth = rd["DateOfBirth"].ToString();
+            newuser.ImageUrl = rd["SpotifyImgUrl"].ToString();
+            newuser.Country = rd["Country"].ToString();
+            newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
+            newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
+            newuser.SpotifyToken = rd["SpotifyToken"].ToString();
+            newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
+            newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
+            newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
+            Con.Close();
+            return newuser;
+        }
+        public static User GetUserByUserName(string displayName)
+        {
+            User newuser = new User();
+            if (Con.State == ConnectionState.Open)
+                Con.Close();
+            Con.Open();
+            var cmd = new SqlCommand("Select * From Users Where DisplayName = \'" + displayName + "\'" + "OR UserId = \'" + displayName + "\'", Con);
+            var rd = cmd.ExecuteReader();
+            if (!rd.Read())
+            {
+                Con.Close();
+                return null;
+            }
+            newuser.Id = Convert.ToInt32(rd["Id"].ToString());
+            newuser.UserId = rd["UserId"].ToString();
+            newuser.DisplayName = rd["DisplayName"].ToString();
+            newuser.AccountUrl = rd["SpotifyAccountUrl"].ToString();
+            newuser.DateOfBirth = rd["DateOfBirth"].ToString();
+            newuser.ImageUrl = rd["SpotifyImgUrl"].ToString();
+            newuser.Country = rd["Country"].ToString();
+            newuser.SpotifyAuthenticationToken = rd["SpotifyAuthenticationToken"].ToString();
+            newuser.SpotifyRefreshToken = rd["SpotifyRefreshToken"].ToString();
+            newuser.SpotifyToken = rd["SpotifyToken"].ToString();
+            newuser.SpotifyTokenExpire = rd["SpotifyTokenExpire"].ToString();
+            newuser.UserRole = Convert.ToInt32(rd["UserRole"].ToString());
+            newuser.FollowerCount = Convert.ToInt32(rd["FollowerCount"].ToString());
+            Con.Close();
+            return newuser;
+        }
+
         public static void RemoveUser(User user)
         {
             if (Con.State == ConnectionState.Open)
                 Con.Close();
             Con.Open();
-            var cmd = new SqlCommand("Delete From Users Where UserId = " + user.Id, Con);
+            var cmd = new SqlCommand("Delete From Users Where UserId = '" + user.UserId + "\'", Con);
             cmd.ExecuteNonQuery();
             Con.Close();
         }
@@ -161,6 +161,7 @@ namespace Trackify.FLayer
             if (Con.State == ConnectionState.Open)
                 Con.Close();
             Con.Open();
+
             var cmd = new SqlCommand("Drop Table Users", Con);
             cmd.ExecuteNonQuery();
             Con.Close();
@@ -196,10 +197,12 @@ namespace Trackify.FLayer
                     {
                         connection.Open();
                         var recordsAffected = command.ExecuteNonQuery();
+                        Program.lm.Log(Program.lm.fileName, 3, user.UserId, "");
                         connection.Close();
                     }
                     catch (SqlException exception)
                     {
+                        Program.lm.Log(Program.lm.fileName, -3, user.UserId, "");
                         // error here
                     }
                 }
